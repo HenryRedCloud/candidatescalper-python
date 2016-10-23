@@ -30,13 +30,17 @@ r = requests.get(url)
 
 tree = html.fromstring(r.content)
 
+print r.url
+
 for i in range(1,20):
 	for j in range(1,10):
+		job = tree.xpath('//*[@id="MasterMainContent_InnerContent"]/div[3]/div/div['+str(i)+']/div/div[1]/div[1]/span/text()')
 		candidates = tree.xpath('//*[@id="MasterMainContent_InnerContent"]/div[3]/div/div['+str(i)+']/div/div['+str(j)+']/div/div[1]/span/text()')
 		website = tree.xpath('//*[@id="MasterMainContent_InnerContent"]/div[3]/div/div['+str(i)+']/div/div['+str(j)+']/div/div[3]/div[1]/span[1]/span/a/@href')
 		moreinfo = tree.xpath('//*[@id="MasterMainContent_InnerContent"]/div[3]/div/div['+str(i)+']/div/div['+str(j)+']/div/div[3]/div[4]/a/@href')
+		party = tree.xpath('//*[@id="MasterMainContent_InnerContent"]/div[3]/div/div['+str(i)+']/div/div['+str(j)+']/div/div[1]/span[1]/a/text()')
 		if len(moreinfo) > 0:
 			morehtml = requests.get(moreinfo[0])
-			print(morehtml.content)
+#			print(morehtml.content)
 		if len(candidates) > 0:
-			print(candidates,website, moreinfo)
+			print(job,candidates[0][:-3],party,website,moreinfo)
