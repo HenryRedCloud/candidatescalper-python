@@ -4,26 +4,15 @@ import csv
 from lxml import html
 import sys
 from rapidconnect import RapidConnect
+from flask import Flask, url_for
 
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from snippets.models import Snippet
-from snippets.serializers import SnippetSerializer
+@app.route('/rapid/<ak>')
+def call_rap(ak):
+	return rapid(ak)
 
-@api_view(['GET', 'POST'])
-def snippet_list(request):
-	if request.method == 'GET':
-		snippets = Snippet.objects.all()
-		serializer = SnippetSerializer(snippets, many=True)
-		return Response(serializer.data)
-
-	elif request.method == 'POST':
-		serializer = SnippetSerializer(data=request.data)
-		if serializer.is_valid():
-			serializer.save()
-			return Response(serializer.data, status=status.HTTP_201_CREATED)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+@app.route('/candidates/<addr>')
+def call_rap(ak):
+	return candidates(addr)
 		
 def rapid(access_key):
 	rapid = RapidConnect('DJT', '173286f8-8072-4dbf-bef8-91c992403d8e');
@@ -101,15 +90,19 @@ def candidates(address):
 
 	print r.url
 
+	allar = []
 	for i in range(1,20):
+		job = tree.xpath('//*[@id="MasterMainContent_InnerContent"]/div[3]/div/div['+str(i)+']/div/div[1]/div[1]/span/text()')
+		ar = []
 		for j in range(1,10):
-			job = tree.xpath('//*[@id="MasterMainContent_InnerContent"]/div[3]/div/div['+str(i)+']/div/div[1]/div[1]/span/text()')
 			candidates = tree.xpath('//*[@id="MasterMainContent_InnerContent"]/div[3]/div/div['+str(i)+']/div/div['+str(j)+']/div/div[1]/span/text()')
 			website = tree.xpath('//*[@id="MasterMainContent_InnerContent"]/div[3]/div/div['+str(i)+']/div/div['+str(j)+']/div/div[3]/div[1]/span[1]/span/a/@href')
 			moreinfo = tree.xpath('//*[@id="MasterMainContent_InnerContent"]/div[3]/div/div['+str(i)+']/div/div['+str(j)+']/div/div[3]/div[4]/a/@href')
 			party = tree.xpath('//*[@id="MasterMainContent_InnerContent"]/div[3]/div/div['+str(i)+']/div/div['+str(j)+']/div/div[1]/span[1]/a/text()')
-			if len(moreinfo) > 0:
-				morehtml = requests.get(moreinfo[0])
-#				print(morehtml.content)
+			#if len(moreinfo) > 0:
+			#	morehtml = requests.get(moreinfo[0])
 			if len(candidates) > 0:
-				print(job,candidates[0][:-3],party,website,moreinfo)
+				#print(job,candidates[0][:-3],party,website,moreinfo)
+				ar.append((job,candidates[0][:-3],party,website,moreinfo))
+		allar.append(ar)
+	return allar
