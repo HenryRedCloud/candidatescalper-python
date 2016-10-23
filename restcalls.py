@@ -6,26 +6,29 @@ import sys
 from rapidconnect import RapidConnect
 from flask import Flask, url_for
 
-@app.route('/rapid/<ak>')
-def call_rap(ak):
-	return rapid(ak)
+app = Flask(__name__)
 
-@app.route('/candidates/<addr>')
-def call_rap(ak):
-	return candidates(addr)
-		
+@app.route('/rapid/<key>')
+def api_rapid(key):
+	val = rapid(key)
+	return val
+
+@app.route('/candidates/<articleid>')
+def api_candidates(articleid):
+	return json.dumps(candidates(articleid))
+
 def rapid(access_key):
 	rapid = RapidConnect('DJT', '173286f8-8072-4dbf-bef8-91c992403d8e');
 
 	result = rapid.call('FacebookGraphAPI', 'getProfile', { 
-		'access_token': 'EAACEdEose0cBAFTI9ZAw2k1eUcdMZCTQqBNpyU8D0ooDE8CoqabLVwr6snXvDSFkPwLqC6QJwtE42AwdkO1903QSb7EgwfaA71FNVD9UY1cIMZCU5NWhNOXSPfljusIMcXECnqL4uZBPywA12ICdKJQKNJbXeULWXAPND0kNDAZDZD',
+		'access_token': 'EAACEdEose0cBAFD1EhI4HoMzJkyMvZCK4NXLbd4YJQUxy6bZAvdpJSZAbhKBGm46GU8BO0Ybk5Nzdp1iHM1M88t6gEp0MrEOCpD2RgZBj99S7c3SQGSMjZBcpZCCufj9AcyQDKX9epZCKppmsoKEmJhByx8mW6DdypabCTrF2V5mAZDZD',
 		'profile_id': 'me'
 		 
 		 });
 	jsontext = json.loads(result)
 	idnum = jsontext["id"]
 
-	access = 'EAACEdEose0cBADeXcfNC9FujDha0qV9cmNZCP02ywTZCzM2zq3DR3grSYqGhgePNpBjt5A805KzZC8vRaKNaIm53ZBKTFu09oZBXF9aZCs4ZB62hYWFAd3LI5FCOb6lX53wBeUHOkAzvCwh4CH8oZCw4a5KWN5zQ8J69tudWeEA4ZBQZDZD'
+	access = 'EAACEdEose0cBAFD1EhI4HoMzJkyMvZCK4NXLbd4YJQUxy6bZAvdpJSZAbhKBGm46GU8BO0Ybk5Nzdp1iHM1M88t6gEp0MrEOCpD2RgZBj99S7c3SQGSMjZBcpZCCufj9AcyQDKX9epZCKppmsoKEmJhByx8mW6DdypabCTrF2V5mAZDZD'
 
 	fields = "id,name,hometown,about,age_range,birthday,education,gender,inspirational_people,interested_in,locale,political,religion,relationship_status"
 
@@ -85,7 +88,7 @@ def candidates(address):
 
 	url = 'http://vote-'+stateabbr.lower()+'.org/Ballot.aspx?State='+stateabbr+'&Election='+stateabbr+'20161108GA&Congress='+cong+'&StateSenate='+statesen+'&StateHouse='+statehouse+'&County='+countynum
 	r = requests.get(url)
-
+	print r.content
 	tree = html.fromstring(r.content)
 
 	print r.url
@@ -106,3 +109,6 @@ def candidates(address):
 				ar.append((job,candidates[0][:-3],party,website,moreinfo))
 		allar.append(ar)
 	return allar
+	
+
+app.run()
