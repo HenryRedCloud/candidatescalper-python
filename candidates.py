@@ -34,5 +34,9 @@ for i in range(1,20):
 	for j in range(1,10):
 		candidates = tree.xpath('//*[@id="MasterMainContent_InnerContent"]/div[3]/div/div['+str(i)+']/div/div['+str(j)+']/div/div[1]/span/text()')
 		website = tree.xpath('//*[@id="MasterMainContent_InnerContent"]/div[3]/div/div['+str(i)+']/div/div['+str(j)+']/div/div[3]/div[1]/span[1]/span/a/@href')
+		moreinfo = tree.xpath('//*[@id="MasterMainContent_InnerContent"]/div[3]/div/div['+str(i)+']/div/div['+str(j)+']/div/div[3]/div[4]/a/@href')
+		if len(moreinfo) > 0:
+			morehtml = requests.get(moreinfo[0])
+			print(morehtml.content)
 		if len(candidates) > 0:
-			print candidates,website
+			print(candidates,website, moreinfo)
