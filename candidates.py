@@ -44,3 +44,10 @@ for i in range(1,20):
 #			print(morehtml.content)
 		if len(candidates) > 0:
 			print(job,candidates[0][:-3],party,website,moreinfo)
+			name = candidates[0][:-3].split(" ")[0]
+			r = requests.get("https://congress.api.sunlightfoundation.com/legislators?query="+name+"&apikey=9b5f43862a344c20865c9491753c9f01") 
+			jsontext = json.loads(r.content)
+			print jsontext
+			if len(jsontext["results"]) > 0:
+				idnum = jsontext["results"][0]["govtrack_id"]
+				print idnum
